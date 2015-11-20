@@ -36,9 +36,11 @@ public class UserProcess {
 	pageTable = new TranslationEntry[numPhysPages];
 	for (int i=0; i<numPhysPages; i++)
 	    pageTable[i] = new TranslationEntry(i,i,false,false,false,false);
-        
+        //file descriptor
 	fileTable = new OpenFile[16];
+        //standard input
 	fileTable[0] = UserKernel.console.openForReading();
+        //standar output
 	fileTable[1] = UserKernel.console.openForWriting();
     }
     
