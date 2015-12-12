@@ -28,6 +28,7 @@ public class UserKernel extends ThreadedKernel {
 	
 	processIDSem = new Semaphore(1);
 	freePagesSem = new Semaphore(1);
+        activeProcessSem = new Semaphore(1);
 
 	//create list of free pages
 	for (int i = 0; i < Machine.processor().getNumPhysPages(); i++) {
@@ -124,9 +125,11 @@ public class UserKernel extends ThreadedKernel {
     private static Coff dummy1 = null;
 
     public static int newProcessID = 0;
+    public static int activeProcesses = 0;
 
     public static Semaphore processIDSem;
     public static Semaphore freePagesSem;
+    public static Semaphore activeProcessSem;
 
     public static LinkedList<Integer> freePages = new LinkedList<Integer>();;
 }

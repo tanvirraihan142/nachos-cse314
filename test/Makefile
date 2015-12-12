@@ -30,19 +30,14 @@ STDLIB_O = start.o stdio.o stdlib.o
 LIB = assert atoi printf readline stdio strncmp strcat strcmp strcpy strlen memcpy memset
 NLIB = libnachos.a
 
-TARGETS = halt sh matmult sort echo cat cp mv rm #chat chatserver
+TARGETS = halt sh matmult sort echo cat cp mv rm mypgr #chat chatserver
 
 .SECONDARY: $(patsubst %.c,%.o,$(wildcard *.c))
 
 all: $(patsubst %,%.coff,$(TARGETS))
 
-ag: grade-file.coff grade-exec.coff grade-mini.coff grade-dumb.coff
-
 clean:
 	rm -f strt.s *.o *.coff $(NLIB)
-
-agclean: clean
-	rm -f f1-* f2-*
 
 $(NLIB): $(patsubst %,$(NLIB)(%.o),$(LIB)) start.o
 	$(RANLIB) $(NLIB)
