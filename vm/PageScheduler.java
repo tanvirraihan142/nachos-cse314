@@ -101,6 +101,7 @@ public class PageScheduler {
             entry.readOnly = loader.loadSection(vpn, ppn).readOnly;
         }
         pageTable.put(processID, entry);
+        
         lru[ppn] = Machine.timer().getTime();
 
         pageLock.release();

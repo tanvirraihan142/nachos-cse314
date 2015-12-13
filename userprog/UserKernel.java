@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 
 import java.util.LinkedList;
+import nachos.vm.SwapFile;
 
 /**
  * A kernel that can support multiple user processes.
@@ -117,6 +118,7 @@ public class UserKernel extends ThreadedKernel {
      */
     public void terminate() {
 	super.terminate();
+        System.out.println("Swap Count "+ SwapFile.swapCount);
     }
 
     /** Globally accessible reference to the synchronized console. */

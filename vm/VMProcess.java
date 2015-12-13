@@ -23,7 +23,8 @@ public class VMProcess extends UserProcess {
      * Called by <tt>UThread.saveState()</tt>.
      */
     public void saveState() {
-        VMKernel.tlbScheduler.clearTLB(processID); //flush TLB + wris te back dirty bit
+        //System.out.println("Swap Count "+ SwapFile.swapCount);
+        VMKernel.tlbScheduler.clearTLB(processID); //flush TLB + write te back dirty bit
     }
 
     /**
@@ -130,6 +131,12 @@ public class VMProcess extends UserProcess {
      *
      * @param cause the user exception that occurred.
      */
+    
+    public void handleExit(int exit) {
+        System.out.println("Swap Count "+ SwapFile.swapCount);
+        super.handleExit(exit);
+    }
+    
     public void handleException(int cause) {
         Processor processor = Machine.processor();
 
@@ -141,6 +148,7 @@ public class VMProcess extends UserProcess {
             case Processor.exceptionPageFault:
                 VMKernel.pageScheduler.handlePageFault(loader, processID, Processor.pageFromAddress(Machine.processor().readRegister(Processor.regBadVAddr)));
                 break;
+            
 
             default:
                 super.handleException(cause);

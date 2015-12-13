@@ -23,6 +23,7 @@ public class SwapFile {
     public void init() {
         pagesize = Machine.processor().pageSize;
         swapFile = Machine.stubFileSystem().open(filename, true);
+        swapCount = 0;
     }
 
     //invoked by unloadsections()
@@ -50,6 +51,7 @@ public class SwapFile {
         int page = usedPage.containsKey(p) ? usedPage.get(p) : allocate();
         mapping.put(p, entry);
         usedPage.put(p, new Integer(page));
+        swapCount++;
         return swapFile.write(calcOffset(page), Machine.processor().getMemory(), Processor.makeAddress(entry.ppn, 0), pagesize);
     }
 
@@ -70,6 +72,8 @@ public class SwapFile {
         entry.valid = true;
         entry.dirty = false;
         entry.used = false;
+        
+        swapCount++;
         return entry;
     }
 
@@ -89,6 +93,7 @@ public class SwapFile {
     private LinkedList<Integer> freePage;
 
     private int pageCount = 0;
+    public static int swapCount;
 
     private String filename;
     private static int pagesize;

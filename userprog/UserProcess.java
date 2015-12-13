@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import java.io.EOFException;
+import nachos.vm.SwapFile;
 
 /**
  * Encapsulates the state of a user process that is not contained in its user
@@ -470,8 +471,11 @@ public class UserProcess {
 
         if (terminateCondition == 1) {
             Kernel.kernel.terminate();
+            //System.out.println("Swap Count "+ SwapFile.swapCount);
         }
-
+        
+        
+        
         KThread.finish();
 
     }

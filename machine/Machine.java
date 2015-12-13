@@ -6,6 +6,7 @@ import nachos.security.*;
 import nachos.ag.*;
 
 import java.io.File;
+import nachos.vm.SwapFile;
 
 /**
  * The master class of the simulated machine. Processes command line arguments,
@@ -96,7 +97,7 @@ public final class Machine {
      */
     public static void halt() {
 	System.out.print("Machine halting!\n\n");
-	stats.print();
+        stats.print();
 	terminate();
     }
 
