@@ -294,12 +294,13 @@ public class UserProcess {
         // and finally reserve 1 page for arguments, numPages is now the total number
         // of pages needed for this process
         numPages++;
-
+        int freePageNum=0;
         // allocate pages for the stack and arguments
         for (int i = codeSectionLength; i < stackPages + codeSectionLength + 1; i++) {
             TranslationEntry entry = pageTable[i];
             UserKernel.freePagesSem.P();
-            int freePageNum = UserKernel.freePages.removeFirst();
+            if (UserKernel.freePages.size()>0)
+                freePageNum = UserKernel.freePages.removeFirst();
             UserKernel.freePagesSem.V();
             entry.ppn = freePageNum;
             entry.valid = true;
@@ -352,9 +353,11 @@ public class UserProcess {
                     + " section (" + section.getLength() + " pages)");
             for (int i = 0; i < section.getLength(); i++) {
                 int vpn = section.getFirstVPN() + i;
+                int freePageNum = 0;
                 TranslationEntry entry = pageTable[vpn];
                 UserKernel.freePagesSem.P();
-                int freePageNum = UserKernel.freePages.removeFirst();
+                if (UserKernel.freePages.size()>0)
+                    freePageNum = UserKernel.freePages.removeFirst();
                 UserKernel.freePagesSem.V();
                 entry.ppn = freePageNum;
                 entry.valid = true;
@@ -477,8 +480,12 @@ public class UserProcess {
      * Handle the join() system call.
      */
     private int handleJoin(int pid) {
-
+        if(pid<0){
+            return -1;
+	}
+        
         for (UserProcess child : childList) {
+            if (child != null )
             if (child.processID == pid) {
                 child.joinSem.P();
                 return child.exitStatus;
@@ -488,6 +495,15 @@ public class UserProcess {
     }
 
     private int handleRead(int fileDescriptor, int buffer, int size) {
+        if(fileDescriptor<0 || fileDescriptor>15){
+            Lib.debug(dbgProcess, "handleRead:Descriptor out of range");
+            return -1;
+	}
+        if(size<0){
+            Lib.debug(dbgProcess, "handleRead:Size to read cannot be negative");
+            return -1;
+	}
+        
         OpenFile file = fileTable[fileDescriptor];
         if (file == null) {
             return -1;
@@ -496,13 +512,26 @@ public class UserProcess {
         byte[] buff = new byte[size];
         int sizeRead;
         sizeRead = file.read(buff, 0, size);
-
+        if(sizeRead==-1){
+            Lib.debug(dbgProcess, "handleRead:Error occurred when try to read file");
+            return -1;
+	}
         writeVirtualMemory(buffer, buff);
 
         return sizeRead;
     }
 
     private int handleWrite(int fileDescriptor, int buffer, int size) {
+        if(fileDescriptor <0||fileDescriptor>15){
+            Lib.debug(dbgProcess,"hanleWirte:Descriptor out of range");
+            return -1;
+	}
+	if(size<0){
+            Lib.debug(dbgProcess, "handleWrite:Size to write cannot be negative");
+            return -1;	
+        }
+        
+        
         OpenFile file = fileTable[fileDescriptor];
         if (file == null) {
             return -1;
@@ -512,6 +541,10 @@ public class UserProcess {
         readVirtualMemory(buffer, buff);
         int sizeWritten;
         sizeWritten = file.write(buff, 0, size);
+        if(sizeWritten==-1){
+            Lib.debug(dbgProcess, "handleWrite:Error occur when read file");
+            return -1;
+	}
         return sizeWritten;
     }
 

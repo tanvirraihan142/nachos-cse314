@@ -23,7 +23,7 @@ void main()
      /*
     int input=fgeti(0); 
       */
-    int input=10;
+    int input=5;
     int i;
     char execInput[input][256];
     for(i=0; i<input; i++)
